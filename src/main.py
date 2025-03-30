@@ -79,7 +79,7 @@ def guard_image(guard_blob, img_format: Literal['png', 'jpeg']):
     )
     return response
 
-SYSTEM_PROMPT = """;; You are a Guardrails judge, making judgements based on the given functions
+SYSTEM_PROMPT = """;; You are a multilingual Guardrails judge, making judgements based on the given functions
 ;; First, define our main guardrailing check function.
 ;; It strictly returns only "GUARDRAIL_INTERVENED" or "NONE".
 (defun guardrail-check (content)
@@ -88,7 +88,7 @@ SYSTEM_PROMPT = """;; You are a Guardrails judge, making judgements based on the
    - \"NONE\" otherwise.
    No other values are returned."
   (cond
-    ;; Hate speech or discrimination
+    ;; Hate speech or discrimination, in English or Chinese
     ((hate-speech-or-discrimination-p content)
      "GUARDRAIL_INTERVENED")
 
@@ -322,6 +322,19 @@ def guard(guard_content=None, img_path=None):
     return decision
 
 def main():
+    decision = guard('你傻逼吗')
+    logging.info('INPUT: '+'你傻逼吗')
+    logging.info(decision)
+    decision = guard('你妈死了')
+    logging.info('INPUT: '+'你妈死了')
+    logging.info(decision)
+    decision = guard('吃屎吧你')
+    logging.info('INPUT: '+'吃屎吧你')
+    logging.info(decision)
+    decision = guard('垃圾东西')
+    logging.info('INPUT: '+'垃圾东西')
+    logging.info(decision)
+ 
     """
     Add your test logic, such as
     decision = guard('hihi')

@@ -79,20 +79,24 @@ def guard_image(guard_blob, img_format: Literal['png', 'jpeg']):
     )
     return response
 
-SYSTEM_PROMPT = """;; You are a multilingual Guardrails judge, making judgements based on the given functions
+SYSTEM_PROMPT = """;; You are a multilingual Guardrails judge, specializing in Chinese language, making strict judgements based on the given functions
 ;; First, define our main guardrailing check function.
 ;; It strictly returns only "GUARDRAIL_INTERVENED" or "NONE".
 (defun guardrail-check (content)
-  "Evaluate CONTENT against guardrailing rules, returning only:
-   - \"GUARDRAIL_INTERVENED\" if any rule is violated,
+  "Strictly evaluate CONTENT against guardrailing rules, returning only:
+   - \"GUARDRAIL_INTERVENED\" if any rule is slightly violated,
    - \"NONE\" otherwise.
    No other values are returned."
   (cond
-    ;; Hate speech or discrimination, in English or Chinese
+    ;; Any curse word in either Chinese or English
+    ((curse-p content)
+     "GUARDRAIL_INTERVENED")
+
+    ;; Hate speech or discrimination of any signs in either Chinese or English
     ((hate-speech-or-discrimination-p content)
      "GUARDRAIL_INTERVENED")
 
-    ;; Explicit sexual content
+    ;; Explicit sexual content of any signs in either Chinese or English
     ((explicit-sexual-content-p content)
      "GUARDRAIL_INTERVENED")
 
@@ -100,7 +104,7 @@ SYSTEM_PROMPT = """;; You are a multilingual Guardrails judge, making judgements
     ((illegal-activities-p content)
      "GUARDRAIL_INTERVENED")
 
-    ;; Violence or gore
+    ;; Violence or gore of any signs in either Chinese or English
     ((violence-or-gore-p content)
      "GUARDRAIL_INTERVENED")
 
@@ -333,6 +337,9 @@ def main():
     logging.info(decision)
     decision = guard('垃圾东西')
     logging.info('INPUT: '+'垃圾东西')
+    logging.info(decision)
+    decision = guard('去死吧你')
+    logging.info('INPUT: '+'去死吧你')
     logging.info(decision)
  
     """
